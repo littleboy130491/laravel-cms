@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Camya\Filament\Forms\Components\TitleWithSlugInput;
 use Riodwanto\FilamentAceEditor\AceEditor;
-use Illuminate\Support\Str;
 use App\Filament\Exports\PostExporter;
 use App\Filament\Imports\PostImporter;
 use Illuminate\Database\Eloquent\Collection;
