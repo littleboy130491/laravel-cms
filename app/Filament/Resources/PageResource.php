@@ -17,11 +17,9 @@ use Illuminate\Support\Str;
 use Riodwanto\FilamentAceEditor\AceEditor;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\File;
-
-
+use RalphJSmit\Filament\SEO\SEO;
 class PageResource extends Resource
 {
-    //protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -52,13 +50,12 @@ class PageResource extends Resource
                     ]),
                 Forms\Components\Section::make('Content')
                     ->schema([
-                        Forms\Components\KeyValue::make('meta')
-                            ->reorderable(),
                         AceEditor::make('content')
                             ->mode('php')
                             ->helperText(new HtmlString('You can put HTML, blade or components here. @ characters are not supported.
                             <br>You can access the value form fields using {{$page->field_name}}. Ex: {{$page->title}}')),
-
+                        Forms\Components\KeyValue::make('meta')
+                            ->reorderable(),
                     ]),
                 Forms\Components\Section::make('Additional Code')
                     ->columns(2)
@@ -92,6 +89,11 @@ class PageResource extends Resource
                             })
                             ->searchable()
                             ->helperText('Leave empty for using default template'),
+                        Forms\Components\Section::make('SEO')
+                            ->schema([
+                                SEO::make(),
+                            ]),
+
                     ])
             ]);
 

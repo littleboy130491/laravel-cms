@@ -15,7 +15,7 @@ use Filament\Forms\Set;
 use Illuminate\Support\Str;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Support\HtmlString;
 use App\Filament\Traits\InteractsWithFiles;
 
 class TemplateResource extends Resource
@@ -55,7 +55,9 @@ class TemplateResource extends Resource
                             ->readOnly(fn($operation) => $operation === 'edit'),
 
                         AceEditor::make('content')
-                            ->label('Template code'),
+                            ->label('Template code')
+                            ->helperText(new HtmlString('You can put HTML, blade or components here. @ characters are not supported.<br>
+                            Use <b>{!! $content !!}</b> to display HTML content from page record.')),
 
                         Forms\Components\Toggle::make('is_active')
                             ->label('Active')
@@ -77,7 +79,7 @@ class TemplateResource extends Resource
 
                 Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\TextColumn::make('component_name')
-                    ->getStateUsing(fn(Template $record): string => '<x-components.templates.' . $record->slug . '>')
+                    ->getStateUsing(fn(Template $record): string => '<x-templates.' . $record->slug . '/>')
                     ->icon('heroicon-o-clipboard')
                     ->iconPosition(IconPosition::After)
                     ->iconColor('primary')
@@ -94,15 +96,15 @@ class TemplateResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('preview')
                     ->icon('heroicon-o-eye')
-                    ->url(fn(Template $record) => url("/preview/{$record->slug}"))
+                    ->url(fn(Template $record) => url("/preview/templates/{$record->slug}"))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (Template $record) {
                         $slug = $record->slug;
 
                         if ($slug) {
-                            $filePath = resource_path(static::$resourcePath . $slug . '.blade.php');
-                            static::deleteFile($filePath);
+                            $filePath = resource_path(static::$resourcePath);
+                            static::deleteFile($filePath, $slug . '.blade.php');
                         }
                     }),
 
@@ -118,8 +120,8 @@ class TemplateResource extends Resource
                                 // Then handle file deletion
                                 $slug = $record->slug;
                                 if ($slug) {
-                                    $filePath = resource_path(static::$resourcePath . $slug . '.blade.php');
-                                    static::deleteFile($filePath);
+                                    $filePath = resource_path(static::$resourcePath);
+                                    static::deleteFile($filePath, $slug . '.blade.php');
                                 }
                             });
                         })

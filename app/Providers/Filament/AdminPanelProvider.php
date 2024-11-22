@@ -25,7 +25,8 @@ use Illuminate\Validation\Rules\Password;
 use Filament\Tables\Columns\Column;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Gate;
-
+use Filament\Navigation\NavigationGroup;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -68,16 +69,25 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
-                'Contents',
-                'Users',
-                'Settings',
+                NavigationGroup::make()
+                    ->label('Contents')
+                    ->icon('heroicon-o-document-text'),
+                NavigationGroup::make()
+                    ->label('Users')
+                    ->icon('heroicon-o-users'),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->icon('heroicon-o-cog-6-tooth'),
+
             ])
-            //->databaseNotifications()
+            ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
             ->databaseTransactions()
             //->spa()
-
+            ->resources([
+                config('filament-logger.activity_resource')
+            ])
             ->plugins([
                 FilamentShieldPlugin::make(),
                 BreezyCore::make()
@@ -103,7 +113,7 @@ class AdminPanelProvider extends PanelProvider
                 // ->registerNavigation(false)
                 // ->defaultListView('grid' || 'list')
                 //     ->resource(\App\Filament\Resources\CustomMediaResource::class),
-
+                FilamentSpatieLaravelBackupPlugin::make(),
             ]);
     }
 
@@ -116,6 +126,6 @@ class AdminPanelProvider extends PanelProvider
                 ->sortable();
         });
         Gate::policy(\Awcodes\Curator\Models\Media::class, \App\Policies\MediaPolicy::class);
-
+        Gate::policy(\Spatie\Activitylog\Models\Activity::class, \App\Policies\ActivityPolicy::class);
     }
 }

@@ -11,7 +11,6 @@ class EditTemplate extends EditRecord
 {
     use InteractsWithFiles;
     protected static string $resource = TemplateResource::class;
-    protected static bool $unsavedDataChangesAlert = true;
 
     protected static function getResourcePath(): string
     {
@@ -24,15 +23,15 @@ class EditTemplate extends EditRecord
             Actions\Action::make('preview')
                 ->icon('heroicon-o-eye')
                 ->color('gray')
-                ->url(fn(Model $record) => url("/preview/{$record->slug}"))
+                ->url(fn(Model $record) => url("/preview/templates/{$record->slug}"))
                 ->openUrlInNewTab(),
             Actions\DeleteAction::make()
                 ->after(function (Model $record) {
                     $slug = $record->slug;
 
                     if ($slug) {
-                        $filePath = resource_path(static::getResourcePath() . $slug . '.blade.php');
-                        static::deleteFile($filePath);
+                        $filePath = resource_path(static::getResourcePath());
+                        static::deleteFile($filePath, $slug . '.blade.php');
                     }
                 }),
         ];
@@ -45,9 +44,9 @@ class EditTemplate extends EditRecord
         $content = $data['content'];
 
         if ($slug) {
-            $filePath = resource_path(static::getResourcePath() . $slug . '.blade.php');
+            $filePath = resource_path(static::getResourcePath());
 
-            static::putFile($filePath, $content);
+            static::putFile($filePath, $slug . '.blade.php', $content);
         }
 
     }

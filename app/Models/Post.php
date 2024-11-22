@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\File;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasSEO;
+
 
     protected $fillable = [
         'title',
@@ -77,5 +79,38 @@ class Post extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class)->withTimestamps();
+    }
+
+    public function featuredImage(): BelongsTo
+    {
+        return $this->belongsTo(\Awcodes\Curator\Models\Media::class, 'featured_image');
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        $title = $this->seo->title
+            ?? Str::limit(
+                $this->title ?? null,
+                60,
+                '',
+                preserveWords: true
+            );
+        $description = $this->seo->description
+            ?? $this->excerpt
+            ?? Str::limit(
+                strip_tags($this->content ?? null),
+                160,
+                '',
+                preserveWords: true
+            );
+        $image = $this->seo?->image
+            ?? $this->featuredImage?->path
+            ?? null;
+        // Override only the properties you want:
+        return new SEOData(
+            title: $title,
+            description: $description,
+            image: $image,
+        );
     }
 }

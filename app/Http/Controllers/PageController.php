@@ -15,8 +15,8 @@ class PageController extends Controller
             ->where('status', 'published')
             ->firstOrFail();
 
-        // remove .blade.php extension, uUse default template if not specified
-        $template = $page->template ? str_replace(".blade.php", "", $page->template) : 'default';
+        // remove .blade.php extension
+        $templateName = $page->template ? str_replace(".blade.php", "", $page->template) : '';
 
         // blade content
         $bladeContent = Blade::render($page->content, ["page" => $page]);
@@ -27,9 +27,10 @@ class PageController extends Controller
 
         return view('frontend.page', [
             'page' => $page,
-            'template' => $template,
+            'componentName' => $templateName,
             'content' => $bladeContent,
             'dataClass' => $dataClass,
+            'modelName' => $modelName,
         ]);
     }
 }

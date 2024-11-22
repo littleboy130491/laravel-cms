@@ -7,3 +7,7 @@
 .fi-sidebar-nav {
    @apply border-x-2;
 }
+
+.fi-sidebar-item-grouped-border {
+   @apply invisible;
+}

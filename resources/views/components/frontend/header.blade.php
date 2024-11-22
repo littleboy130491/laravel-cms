@@ -1,4 +1,5 @@
 @props(['sticky' => true])
+@inject('settings', 'App\Settings\GeneralSettings')
 
 <header @class([
     'w-full bg-white border-b border-gray-200',
@@ -7,6 +8,8 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             {{-- Logo --}}
+
+            <x-curator-glider :media="$settings->site_logo" />
             <div class="flex-shrink-0">
                 <a href="#" class="flex items-center">
                     <img src="" alt="{{ config('app.name') }}" class="h-8 w-auto">

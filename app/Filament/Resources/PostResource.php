@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Awcodes\Curator\Components as Curator;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use RalphJSmit\Filament\SEO\SEO;
 
 class PostResource extends Resource implements HasShieldPermissions
 {
@@ -120,6 +121,10 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Forms\Components\TextInput::make('template')
                             ->nullable()
+                    ]),
+                Forms\Components\Section::make('SEO')
+                    ->schema([
+                        SEO::make(),
                     ]),
 
             ]);

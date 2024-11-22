@@ -105,12 +105,4 @@ class PostPolicy
     {
         return $user->can('reorder_post');
     }
-
-    /**
-     * Determine whether the user can create dummy.
-     */
-    public function createDummy(User $user): bool
-    {
-        return $user->can('create_dummy_post');
-    }
 }

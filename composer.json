@@ -11,11 +11,16 @@
         "blendbyte/filament-title-with-slug": "^1.0",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "jeffgreco13/filament-breezy": "^2.4",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "ralphjsmit/laravel-filament-seo": "^1.4",
         "riodwanto/filament-ace-editor": "^1.1",
-        "spatie/eloquent-sortable": "^4.4"
+        "shuvroroy/filament-spatie-laravel-backup": "^2.2",
+        "spatie/eloquent-sortable": "^4.4",
+        "spatie/laravel-sitemap": "^7.2",
+        "z3d0x/filament-logger": "^0.7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

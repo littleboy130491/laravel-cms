@@ -1,16 +1,18 @@
 @props(['page'])
+@inject('settings', 'App\Settings\GeneralSettings')
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 
 <head>
-    @stack('before-head')
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $page->title ?? config('app.name') }}</title>
+    {!! seo($page ?? null) !!}
+    @stack('after-head')
+
+
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -20,7 +22,8 @@
 
     {!! $page->head_code ?? '' !!}
 
-    @stack('after-head')
+    @stack('before-head')
+    {!! $settings->head_code !!}
 </head>
 
 <body @class([
@@ -33,9 +36,12 @@
     {{ $slot }}
 
 
+
+
     {!! $page->body_code ?? '' !!}
 
     @stack('before-body')
+    {!! $settings->body_code !!}
 </body>
 
 </html>

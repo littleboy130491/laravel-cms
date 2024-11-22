@@ -2,8 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
-use App\Models\Template;
-use Illuminate\Support\Facades\Blade;
+use App\Models;
 
 Route::get('/', function () {
     return view('welcome');
@@ -11,11 +10,25 @@ Route::get('/', function () {
 
 Route::get('/{slug}', [Controllers\PageController::class, 'show']);
 
-Route::get('/preview/{slug}', function (string $slug) {
+Route::get('/posts/{slug}', [Controllers\PostController::class, 'show']);
 
-    $template = Template::where('slug', $slug)
-        ->firstOrFail();
+Route::get('/preview/{type}/{slug}', function (string $type, string $slug) {
 
-    return view('frontend.preview', ['template' => $template->slug]);
+    switch ($type) {
+        case 'templates':
+            $preview_model = Models\Template::class;
+            break;
+        case 'partials':
+            $preview_model = Models\Partial::class;
+            break;
+        default:
+            $preview_model = Models\Template::class;
+    }
+
+    $name = $preview_model::where('slug', $slug)->firstOrFail()->slug;
+    $componentName = $type . '.' . $name;
+
+    return view('frontend.preview', ['componentName' => $componentName]);
 
 });
+

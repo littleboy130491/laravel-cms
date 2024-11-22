@@ -21,10 +21,16 @@ class CreateTemplate extends CreateRecord
         $content = $data['content'];
 
         if ($slug) {
-            $filePath = resource_path(static::getResourcePath() . $slug . '.blade.php');
-            static::putFile($filePath, $content);
+            $filePath = resource_path(static::getResourcePath());
+            static::putFile($filePath, $slug . '.blade.php', $content);
 
         }
 
+    }
+
+    protected function hasUnsavedDataChangesAlert(): bool
+    {
+        // Disable the unsaved changes alert completely, so it will not give alert when putFile is executed
+        return false;
     }
 }
