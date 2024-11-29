@@ -1,7 +1,7 @@
 <?php
 
 use RalphJSmit\Laravel\SEO\Models\SEO;
-use App\Settings\GeneralSettings;
+
 return [
     /**
      * The SEO model. You can use this setting to override the model used by the package.
@@ -12,8 +12,7 @@ return [
     /**
      * Use this setting to specify the site name that will be used in OpenGraph tags.
      */
-    // 'site_name' => app(GeneralSettings::class)->site_name,
-    'site_name' => null,
+    'site_name' => env('APP_NAME', 'My Site'),
 
     /**
      * Use this setting to specify the path to the sitemap of your website. This exact path will outputted, so

@@ -9,9 +9,11 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components;
 use Awcodes\Curator\Components as Curator;
 use Riodwanto\FilamentAceEditor\AceEditor;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class SiteSettings extends SettingsPage
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     // protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationGroup = 'Settings';

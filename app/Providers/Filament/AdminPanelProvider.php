@@ -8,7 +8,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -27,7 +26,8 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Gate;
 use Filament\Navigation\NavigationGroup;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
-
+use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 class AdminPanelProvider extends PanelProvider
 {
 
@@ -45,6 +45,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->maxContentWidth(MaxWidth::Full)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->resources([
+                config('filament-logger.activity_resource')
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
@@ -85,9 +88,6 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->databaseTransactions()
             //->spa()
-            ->resources([
-                config('filament-logger.activity_resource')
-            ])
             ->plugins([
                 FilamentShieldPlugin::make(),
                 BreezyCore::make()
@@ -95,7 +95,7 @@ class AdminPanelProvider extends PanelProvider
                         shouldRegisterUserMenu: true, // Adds a user menu item for My Profile
                         shouldRegisterNavigation: true, // Show in main navigation
                         navigationGroup: 'Settings', // Group name if navigation is enabled
-                        hasAvatars: true, // Enable avatar upload
+                        hasAvatars: false, // Enable avatar upload
                         slug: 'my-profile' // Profile page URL
                     )
                     // Optional: Configure password update validation
@@ -113,7 +113,11 @@ class AdminPanelProvider extends PanelProvider
                 // ->registerNavigation(false)
                 // ->defaultListView('grid' || 'list')
                 //     ->resource(\App\Filament\Resources\CustomMediaResource::class),
-                FilamentSpatieLaravelBackupPlugin::make(),
+                FilamentSpatieLaravelBackupPlugin::make()
+                    ->usingPage(\App\Filament\Pages\Backups::class),
+                FilamentSpatieLaravelHealthPlugin::make()
+                    ->usingPage(\App\Filament\Pages\HealthCheckResults::class),
+                SpotlightPlugin::make(),
             ]);
     }
 

@@ -21,8 +21,10 @@ class PostExporter extends Exporter
             ExportColumn::make('content'),
             ExportColumn::make('excerpt'),
             ExportColumn::make('featured_image'),
-            ExportColumn::make('author.id'),
-            ExportColumn::make('author.name'),
+            ExportColumn::make('author.id')
+                ->label('Author ID'),
+            ExportColumn::make('author.name')
+                ->label('Author Name'),
             ExportColumn::make('status'),
             ExportColumn::make('published_at'),
             ExportColumn::make('is_featured'),

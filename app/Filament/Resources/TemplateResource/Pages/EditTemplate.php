@@ -49,6 +49,7 @@ class EditTemplate extends EditRecord
             static::putFile($filePath, $slug . '.blade.php', $content);
         }
 
+
     }
 
     protected function hasUnsavedDataChangesAlert(): bool

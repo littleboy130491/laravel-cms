@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'name',
         'email',
         'password',
-        'avatar_url',   
+        'avatar_url',
     ];
 
     /**
@@ -53,8 +53,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-       // return $this->hasRole('admin') || $this->hasPermissionTo('view_admin');
-        return $this->hasRole('super_admin') || $this->hasRole('admin');
+        // return $this->hasRole('admin') || $this->hasPermissionTo('view_admin');
+        return $this->hasRole('super_admin') || $this->hasRole('Admin');
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->hasRole('super_admin');
     }
 
     public function getFilamentAvatarUrl(): ?string

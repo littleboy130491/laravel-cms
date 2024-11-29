@@ -23,7 +23,7 @@ use Awcodes\Curator\Components as Curator;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use RalphJSmit\Filament\SEO\SEO;
-
+use Illuminate\Support\Facades\File;
 class PostResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Post::class;
@@ -117,11 +117,18 @@ class PostResource extends Resource implements HasShieldPermissions
                         Forms\Components\DateTimePicker::make('published_at'),
                     ])
                     ->columns(2),
-                Forms\Components\Section::make('Template')
-                    ->schema([
-                        Forms\Components\TextInput::make('template')
-                            ->nullable()
-                    ]),
+                Forms\Components\Select::make('template')
+                    ->options(function () {
+                        $path = resource_path('views/components/templates');
+                        $files = File::files($path);
+
+                        return collect($files)->mapWithKeys(function ($file) {
+                            $filename = $file->getFilename();
+                            return [$filename => $filename];
+                        })->toArray();
+                    })
+                    ->searchable()
+                    ->helperText('Leave empty for using default template'),
                 Forms\Components\Section::make('SEO')
                     ->schema([
                         SEO::make(),

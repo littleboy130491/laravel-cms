@@ -67,10 +67,12 @@ return [
 
         'pages' => [
             'Dashboard',
+            'MyProfilePage',
         ],
 
         'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
+            'AccountWidget',
+            'FilamentInfoWidget',
         ],
 
         'resources' => [],

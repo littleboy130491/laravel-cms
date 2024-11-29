@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Validation\Rules\Password;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -33,11 +34,12 @@ class UserResource extends Resource
                     ->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->dehydrated(fn (?string $state): bool => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
-                    ->rule(Password::default()
-                        ->mixedCase()
-                        ->uncompromised(3)
+                    ->dehydrated(fn(?string $state): bool => filled($state))
+                    ->required(fn(string $operation): bool => $operation === 'create')
+                    ->rule(
+                        Password::default()
+                            ->mixedCase()
+                            ->uncompromised(3)
                     )
                     ->helperText('Password must contain: Minimum 8 characters, 
                         At least one uppercase and one lowercase letter, 
@@ -71,7 +73,7 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ImageColumn::make('avatar_url')
                     ->label('Avatar'),
-                    
+
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('roles')
@@ -82,6 +84,8 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Impersonate::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
