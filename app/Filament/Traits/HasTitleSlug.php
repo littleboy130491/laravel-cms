@@ -29,7 +29,13 @@ trait HasTitleSlug
                 ->required()
                 ->maxLength(255)
                 ->unique(ignoreRecord: true)
-                ->readOnly($readOnly),
+                ->readOnly($readOnly)
+                ->live(onBlur: true)
+                ->rules(['alpha_dash'])
+                ->dehydrateStateUsing(fn($state) => Str::slug($state))
+                ->afterStateUpdated(function ($component, ?string $state) {
+                    $component->state(Str::slug($state));
+                }),
         ];
     }
 }

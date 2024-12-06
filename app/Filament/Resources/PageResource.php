@@ -72,7 +72,7 @@ class PageResource extends Resource
                             ])
                             ->grow(false),
                     ])
-                        ->grow('md')
+                        ->from('md')
                         ->columnSpanFull(),
                     Forms\Components\Section::make('Custom Code')
                         ->columns(2)
