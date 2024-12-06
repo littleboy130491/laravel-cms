@@ -3,3 +3,4 @@
     {!! $content !!}
 </main>
 <x-frontend.footer />
+<div>This is default from frontend</div>

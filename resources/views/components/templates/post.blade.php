@@ -6,3 +6,4 @@
     This is sidebar
 </main>
 <x-frontend.footer/>
+this is post template

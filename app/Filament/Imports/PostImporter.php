@@ -15,28 +15,23 @@ class PostImporter extends Importer
     {
         return [
             ImportColumn::make('title')
-                ->requiredMapping()
-                ->rules(['required']),
+                ->requiredMapping(),
             ImportColumn::make('slug')
-                ->requiredMapping()
-                ->rules(['required']),
+                ->rules(['required', 'unique:posts'])
+                ->requiredMapping(),
             ImportColumn::make('content'),
             ImportColumn::make('excerpt'),
             ImportColumn::make('featured_image'),
             ImportColumn::make('author')
-                ->relationship(),
+                ->relationship(resolveUsing: 'email'),
             ImportColumn::make('status')
-                ->requiredMapping()
-                ->rules(['required']),
+                ->requiredMapping(),
             ImportColumn::make('published_at')
                 ->rules(['datetime']),
             ImportColumn::make('is_featured')
-                ->requiredMapping()
-                ->boolean()
-                ->rules(['required', 'boolean']),
+                ->boolean(),
             ImportColumn::make('order_column')
-                ->numeric()
-                ->rules(['integer']),
+                ->integer(),
             ImportColumn::make('head_code'),
             ImportColumn::make('body_code'),
             ImportColumn::make('template'),
@@ -45,12 +40,12 @@ class PostImporter extends Importer
 
     public function resolveRecord(): ?Post
     {
-        // return Post::firstOrNew([
-        //     // Update existing records, matching them by `$this->data['column_name']`
-        //     'email' => $this->data['email'],
-        // ]);
+        return Post::firstOrNew([
+            // Update existing records, matching them by `$this->data['column_name']`
+            'slug' => $this->data['slug'],
+        ]);
 
-        return new Post();
+        // return new Post();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

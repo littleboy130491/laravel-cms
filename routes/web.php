@@ -4,9 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 use App\Models;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [Controllers\PageController::class, 'home']);
 
 Route::get('/{slug}', [Controllers\PageController::class, 'show']);
 

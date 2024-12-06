@@ -26,13 +26,13 @@ class SiteSettings extends SettingsPage
             ->schema([
                 Components\TextInput::make('site_name'),
                 Components\TextInput::make('site_informations'),
-
                 Curator\Forms\CuratorPicker::make('site_logo')
                     ->preserveFilenames(),
-
                 Curator\Forms\CuratorPicker::make('site_icon')
                     ->preserveFilenames(),
-
+                Forms\Components\KeyValue::make('additional_info')
+                    ->reorderable()
+                    ->columnSpanFull(),
                 Forms\Components\Section::make('Additional Code')
                     ->columns(2)
                     ->schema([

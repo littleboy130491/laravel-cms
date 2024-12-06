@@ -28,6 +28,7 @@ use Filament\Navigation\NavigationGroup;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
+use Filament\SpatieLaravelTranslatablePlugin;
 class AdminPanelProvider extends PanelProvider
 {
 
@@ -94,7 +95,7 @@ class AdminPanelProvider extends PanelProvider
                     ->myProfile(
                         shouldRegisterUserMenu: true, // Adds a user menu item for My Profile
                         shouldRegisterNavigation: true, // Show in main navigation
-                        navigationGroup: 'Settings', // Group name if navigation is enabled
+                        navigationGroup: 'Users', // Group name if navigation is enabled
                         hasAvatars: false, // Enable avatar upload
                         slug: 'my-profile' // Profile page URL
                     )
@@ -104,20 +105,13 @@ class AdminPanelProvider extends PanelProvider
                         requiresCurrentPassword: false,
                     ),
                 \Awcodes\Curator\CuratorPlugin::make(),
-                // ->label('Media')
-                // ->pluralLabel('Media')
-                // ->navigationIcon('heroicon-o-photo')
-                // ->navigationGroup('Content')
-                // ->navigationSort(3)
-                // ->navigationCountBadge()
-                // ->registerNavigation(false)
-                // ->defaultListView('grid' || 'list')
-                //     ->resource(\App\Filament\Resources\CustomMediaResource::class),
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->usingPage(\App\Filament\Pages\Backups::class),
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(\App\Filament\Pages\HealthCheckResults::class),
                 SpotlightPlugin::make(),
+                SpatieLaravelTranslatablePlugin::make()
+                    ->defaultLocales(['en', 'id']),
             ]);
     }
 

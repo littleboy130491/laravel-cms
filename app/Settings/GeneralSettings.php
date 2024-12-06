@@ -12,8 +12,10 @@ class GeneralSettings extends Settings
     public string $site_informations;
     public string $head_code;
     public string $body_code;
+    public array $additional_info;
     public static function group(): string
     {
         return 'general';
     }
+
 }

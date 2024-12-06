@@ -15,11 +15,11 @@ return new class extends Migration {
             $table->id();
 
             // Core page content
-            $table->string('title');
-            $table->string('slug')->unique();
+            $table->json('title');
+            $table->json('slug')->unique();
             $table->json('meta')->nullable();
-            $table->longText('content')->nullable();
-
+            $table->json('content')->nullable();
+            $table->string('featured_image')->nullable();
             // Page status
             $table->enum('status', ['draft', 'published'])
                 ->default('draft');

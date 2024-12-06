@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Illuminate\Support\Str;
-
+use Spatie\Translatable\HasTranslations;
 class Post extends Model
 {
-    use HasFactory, SoftDeletes, HasSEO;
+    use HasFactory, SoftDeletes, HasSEO, HasTranslations;
 
 
     protected $fillable = [
@@ -36,6 +36,13 @@ class Post extends Model
         'is_featured' => 'boolean',
         'order_column' => 'integer',
         'published_at' => 'datetime',
+    ];
+
+    public $translatable = [
+        'title',
+        'slug',
+        'content',
+        'excerpt',
     ];
 
     public const STATUS_DRAFT = 'draft';

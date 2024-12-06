@@ -15,9 +15,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Camya\Filament\Forms\Components\TitleWithSlugInput;
 use Awcodes\Curator\Components as Curator;
+use App\Filament\Traits\HasTitleSlug;
 
 class CategoryResource extends Resource
 {
+    use HasTitleSlug;
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -34,14 +36,7 @@ class CategoryResource extends Resource
     {
         return
             [
-                TitleWithSlugInput::make(
-                    fieldTitle: 'title',
-                    fieldSlug: 'slug',
-                    urlPath: '/' . static::$model::$slugPath . '/',
-                    titleLabel: 'Category Title',
-                    titlePlaceholder: 'Enter category title...',
-                )
-                    ->columnSpan('full'),
+                ...static::titleSlugField(),
                 Forms\Components\RichEditor::make('description')
                     ->columnSpan('full')
                     ->disableToolbarButtons(['attachFiles'])

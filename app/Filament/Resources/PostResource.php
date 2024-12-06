@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
-use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,8 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
-use Camya\Filament\Forms\Components\TitleWithSlugInput;
 use Riodwanto\FilamentAceEditor\AceEditor;
 use App\Filament\Exports\PostExporter;
 use App\Filament\Imports\PostImporter;
@@ -24,8 +21,12 @@ use CodeWithDennis\FilamentSelectTree\SelectTree;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use RalphJSmit\Filament\SEO\SEO;
 use Illuminate\Support\Facades\File;
+use Filament\Forms\Get;
+use App\Filament\Traits\HasTitleSlug;
+use Filament\Resources\Concerns\Translatable;
 class PostResource extends Resource implements HasShieldPermissions
 {
+    use HasTitleSlug, Translatable;
     protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
@@ -37,61 +38,83 @@ class PostResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        TitleWithSlugInput::make(
-                            fieldTitle: 'title',
-                            fieldSlug: 'slug',
-                            // urlPath: '/' . static::getPluralModelLabel() . '/',
-                            urlPath: '/' . static::$model::$slugPath . '/',
-                            titleLabel: 'Post Title',
-                            titlePlaceholder: 'Enter post title...',
-                        )
-                            ->columnSpan('full'),
+                Forms\Components\Split::make([
+                    Forms\Components\Section::make()
+                        ->schema([
+                            ...static::titleSlugField(),
+                            Forms\Components\RichEditor::make('content')
+                                ->columnSpanFull()
+                                ->fileAttachmentsDisk('public')
+                                ->fileAttachmentsDirectory('posts')
+                                ->nullable(),
 
-                        Forms\Components\RichEditor::make('content')
-                            ->columnSpan('full')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('posts')
-                            ->nullable(),
+                            Forms\Components\Textarea::make('excerpt')
+                                ->columnSpanFull()
+                                ->rows(3)
+                                ->nullable(),
+                        ]),
+                    Forms\Components\Section::make()
+                        ->schema([
+                            Forms\Components\Select::make('status')
+                                ->options(Post::getStatuses())
+                                ->default(Post::STATUS_DRAFT)
+                                ->required()
+                                ->live(),
+                            Forms\Components\DateTimePicker::make('published_at')
+                                ->visible(function (Get $get): bool {
+                                    return $get('status') === Post::STATUS_SCHEDULED || $get('status') === Post::STATUS_PUBLISHED;
+                                })
+                                ->required(
+                                    function (Get $get): bool {
+                                        return $get('status') === Post::STATUS_SCHEDULED;
+                                    }
+                                ),
+                            Forms\Components\Toggle::make('is_featured')
+                                ->default(false)
+                                ->required()
+                                ->columnSpanFull(),
+                            Curator\Forms\CuratorPicker::make('featured_image')
+                                ->directory('static::getPluralModelLabel()')
+                                ->preserveFilenames()
+                                ->nullable(),
+                            SelectTree::make('categories')
+                                ->relationship('categories', 'title', 'parent_id')
+                                ->searchable()
+                                ->defaultOpenLevel(2)
+                                ->createOptionForm(
+                                    CategoryResource::formFields()
+                                ),
+                            Forms\Components\Select::make('tags')
+                                ->relationship('tags', 'title')
+                                ->multiple()
+                                ->searchable()
+                                ->preload()
+                                ->createOptionForm(TagResource::formFields()),
+                            Forms\Components\Select::make('author_id')
+                                ->relationship('author', 'name')
+                                ->searchable()
+                                ->default(auth()->id())
+                                ->nullable()
+                                ->preload(),
+                            Forms\Components\Select::make('template')
+                                ->options(function () {
+                                    $path = resource_path('views/components/templates');
+                                    $files = File::files($path);
 
-                        Forms\Components\Textarea::make('excerpt')
-                            ->rows(3)
-                            ->nullable(),
+                                    return collect($files)->mapWithKeys(function ($file) {
+                                        $filename = $file->getFilename();
+                                        return [$filename => $filename];
+                                    })->toArray();
+                                })
+                                ->searchable()
+                                ->helperText('Leave empty for using default template'),
 
-                        Curator\Forms\CuratorPicker::make('featured_image')
-                            ->directory('static::getPluralModelLabel()')
-                            ->preserveFilenames()
-                            ->nullable(),
-                    ])
-                    ->columns(2),
+                        ])
+                        ->grow(false),
+                ])
+                    ->from('md')
+                    ->columnSpanFull(),
 
-
-                Forms\Components\Section::make('Relationships')
-                    ->schema([
-                        SelectTree::make('categories')
-                            ->relationship('categories', 'title', 'parent_id')
-                            ->searchable()
-                            ->defaultOpenLevel(2)
-                            ->createOptionForm(
-                                CategoryResource::formFields()
-                            ),
-                        Forms\Components\Select::make('tags')
-                            ->relationship('tags', 'title')
-                            ->multiple()
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm(TagResource::formFields()),
-
-                        Forms\Components\Select::make('author_id')
-                            ->relationship('author', 'name')
-                            ->searchable()
-                            ->default(auth()->id())
-                            ->nullable()
-                            ->preload(),
-
-                    ])
-                    ->columns(2),
 
                 Forms\Components\Section::make('Custom Code')
                     ->schema([
@@ -105,30 +128,6 @@ class PostResource extends Resource implements HasShieldPermissions
                             ->darkTheme('dracula'),
                     ])
                     ->columns(2),
-                Forms\Components\Section::make('Status')
-                    ->schema([
-                        Forms\Components\Select::make('status')
-                            ->options(Post::getStatuses())
-                            ->default(Post::STATUS_DRAFT)
-                            ->required(),
-                        Forms\Components\Toggle::make('is_featured')
-                            ->default(false)
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('published_at'),
-                    ])
-                    ->columns(2),
-                Forms\Components\Select::make('template')
-                    ->options(function () {
-                        $path = resource_path('views/components/templates');
-                        $files = File::files($path);
-
-                        return collect($files)->mapWithKeys(function ($file) {
-                            $filename = $file->getFilename();
-                            return [$filename => $filename];
-                        })->toArray();
-                    })
-                    ->searchable()
-                    ->helperText('Leave empty for using default template'),
                 Forms\Components\Section::make('SEO')
                     ->schema([
                         SEO::make(),
@@ -197,8 +196,17 @@ class PostResource extends Resource implements HasShieldPermissions
                             ->unique(),
                         Forms\Components\Select::make('status')
                             ->options(Post::getStatuses())
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('published_at'),
+                            ->required()
+                            ->live(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->visible(function (Get $get): bool {
+                                return $get('status') === Post::STATUS_SCHEDULED || $get('status') === Post::STATUS_PUBLISHED;
+                            })
+                            ->required(
+                                function (Get $get): bool {
+                                    return $get('status') === Post::STATUS_SCHEDULED;
+                                }
+                            ),
                     ]),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
@@ -244,7 +252,6 @@ class PostResource extends Resource implements HasShieldPermissions
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),
-                    //    ->disabled(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),

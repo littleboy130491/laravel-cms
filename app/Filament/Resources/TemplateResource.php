@@ -17,11 +17,11 @@ use Filament\Support\Enums\IconPosition;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\HtmlString;
 use App\Filament\Traits\InteractsWithFiles;
-
+use App\Filament\Traits\HasTitleSlug;
 class TemplateResource extends Resource
 {
 
-    use InteractsWithFiles;
+    use InteractsWithFiles, HasTitleSlug;
     protected static ?string $model = Template::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-code-bracket';
@@ -34,38 +34,23 @@ class TemplateResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Template Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state, string $operation) {
-                                if ($operation === 'edit')
-                                    return;
-                                if (($get('slug') ?? '') !== Str::slug($old)) {
-                                    return;
-                                }
+                ...static::titleSlugField(title: 'name', readOnly: true),
 
-                                $set('slug', Str::slug($state));
-                            })
-                            ->required(),
-                        Forms\Components\TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->readOnly(fn($operation) => $operation === 'edit'),
+                AceEditor::make('content')
+                    ->label('Template code')
+                    ->helperText(new HtmlString('You can put HTML, blade or components here.<br>
+                            Use <b>{!! $content !!}</b> to display HTML content from page record.'))
+                    ->columnSpanFull(),
 
-                        AceEditor::make('content')
-                            ->label('Template code')
-                            ->helperText(new HtmlString('You can put HTML, blade or components here. @ characters are not supported.<br>
-                            Use <b>{!! $content !!}</b> to display HTML content from page record.')),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Active')
+                    ->default(true)
+                    ->columnSpanFull(),
 
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
+                Forms\Components\RichEditor::make('description')
+                    ->helperText('For notes only')
+                    ->columnSpanFull(),
 
-                        Forms\Components\RichEditor::make('description')
-                            ->helperText('For notes only'),
-                    ])
             ]);
     }
 

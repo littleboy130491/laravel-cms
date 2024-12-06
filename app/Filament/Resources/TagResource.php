@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
-use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,11 +11,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
-use Camya\Filament\Forms\Components\TitleWithSlugInput;
+use App\Filament\Traits\HasTitleSlug;
 
 class TagResource extends Resource
 {
+    use HasTitleSlug;
     protected static ?string $model = Tag::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
@@ -32,12 +31,7 @@ class TagResource extends Resource
     public static function formFields(): array
     {
         return [
-            TitleWithSlugInput::make(
-                fieldTitle: 'title',
-                fieldSlug: 'slug',
-                urlPath: '/' . static::$model::$slugPath . '/',
-            )
-                ->columnSpan('full'),
+            ...static::titleSlugField(),
 
             Forms\Components\RichEditor::make('description')
                 ->columnSpan('full')
