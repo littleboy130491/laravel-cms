@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->json('title');
             $table->json('slug')->unique();
             $table->json('meta')->nullable();
-            $table->json('content')->nullable();
+            $table->longText('content')->nullable();
             $table->string('featured_image')->nullable();
             // Page status
             $table->enum('status', ['draft', 'published'])

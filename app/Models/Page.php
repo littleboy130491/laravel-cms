@@ -8,9 +8,10 @@ use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 class Page extends Model
 {
-    use SoftDeletes, HasSEO;
+    use SoftDeletes, HasSEO, HasTranslations;
 
     protected $fillable = [
         'title',
@@ -31,7 +32,11 @@ class Page extends Model
         ];
 
     }
-
+    public $translatable = [
+        'title',
+        'slug',
+        'meta',
+    ];
     public function featuredImage(): BelongsTo
     {
         return $this->belongsTo(\Awcodes\Curator\Models\Media::class, 'featured_image');

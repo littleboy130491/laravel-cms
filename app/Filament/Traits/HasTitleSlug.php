@@ -18,13 +18,14 @@ trait HasTitleSlug
                 ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state, string $operation) {
                     if ($operation === 'edit')
                         return;
-                    if (($get('slug') ?? '') !== Str::slug($old)) {
-                        return;
-                    }
-
+                    // if (($get('slug') ?? '') !== Str::slug($old)) {
+                    //     return;
+                    // }
+        
                     $set('slug', Str::slug($state));
                 })
                 ->required(),
+
             Forms\Components\TextInput::make($slug)
                 ->required()
                 ->maxLength(255)
@@ -33,7 +34,7 @@ trait HasTitleSlug
                 ->live(onBlur: true)
                 ->rules(['alpha_dash'])
                 ->dehydrateStateUsing(fn($state) => Str::slug($state))
-                ->afterStateUpdated(function ($component, ?string $state) {
+                ->afterStateUpdated(function (Forms\Components\TextInput $component, ?string $state) {
                     $component->state(Str::slug($state));
                 }),
         ];

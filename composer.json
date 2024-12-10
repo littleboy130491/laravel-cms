@@ -7,8 +7,8 @@
     "require": {
         "php": "^8.2",
         "awcodes/filament-curator": "^3.6",
+        "bezhansalleh/filament-google-analytics": "^2.1",
         "bezhansalleh/filament-shield": "^3.2",
-        "blendbyte/filament-title-with-slug": "^1.0",
         "codewithdennis/filament-select-tree": "^3.1",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",

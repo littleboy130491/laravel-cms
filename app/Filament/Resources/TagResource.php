@@ -12,10 +12,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Traits\HasTitleSlug;
+use Filament\Resources\Concerns\Translatable;
 
 class TagResource extends Resource
 {
-    use HasTitleSlug;
+    use HasTitleSlug, Translatable;
     protected static ?string $model = Tag::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';

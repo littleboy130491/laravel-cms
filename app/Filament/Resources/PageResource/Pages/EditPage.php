@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditPage extends EditRecord
 {
-    use HasCommonHeaderActions;
+    use HasCommonHeaderActions, EditRecord\Concerns\Translatable;
     protected static string $resource = PageResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            Actions\LocaleSwitcher::make(),
             Actions\Action::make('view')
                 ->url(fn(Model $record): string => '/' . $record->slug)
                 ->openUrlInNewTab()

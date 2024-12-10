@@ -10,11 +10,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
-    use HasFactory, Notifiable;
-    use HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -54,7 +54,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function canAccessPanel(Panel $panel): bool
     {
         // return $this->hasRole('admin') || $this->hasPermissionTo('view_admin');
-        return $this->hasRole('super_admin') || $this->hasRole('Admin');
+        return $this->hasRole('super_admin') || $this->hasRole('admin');
     }
 
     public function canImpersonate(): bool
@@ -66,4 +66,29 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     {
         return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
+
+    public function getHighestRoleLevel(): int
+    {
+        return $this->roles
+            ->map(fn($role) => $role->getLevel())
+            ->max() ?? 0;
+    }
+
+    public function hasHigherLevelThan(User $user): bool
+    {
+        return $this->getHighestRoleLevel() >= $user->getHighestRoleLevel();
+    }
+
+    public function getAssignableRoles()
+    {
+        $currentUserLevel = $this->getHighestRoleLevel();
+
+        // Get all roles and filter based on level
+        return Role::all()
+            ->filter(function ($role) use ($currentUserLevel) {
+                return $role->getLevel() <= $currentUserLevel;
+            })
+            ->pluck('name');
+    }
+
 }

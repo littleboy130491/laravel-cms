@@ -47,7 +47,15 @@ class UserResource extends Resource
                     '),
                 Forms\Components\Select::make('roles')
                     ->multiple()
-                    ->relationship('roles', 'name')
+                    ->relationship(
+                        'roles',
+                        'name',
+                        function ($query) {
+                            $user = auth()->user();
+                            $assignableRoles = $user->getAssignableRoles();
+                            $query->whereIn('name', $assignableRoles);
+                        }
+                    )
                     ->preload()
                     ->searchable(),
             ]);
@@ -89,7 +97,8 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(auth()->user()->hasRole('super_admin')),
                 ]),
             ]);
     }

@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\File;
 use RalphJSmit\Filament\SEO\SEO;
 use App\Filament\Traits\HasTitleSlug;
 use Awcodes\Curator\Components as Curator;
+use Filament\Resources\Concerns\Translatable;
 class PageResource extends Resource
 {
-    use HasTitleSlug;
+    use HasTitleSlug, Translatable;
     protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';

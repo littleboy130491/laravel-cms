@@ -24,7 +24,7 @@ class PageController extends Controller
         return $this->displayViewSingle($page);
     }
 
-    public function home(): View
+    public function home(): View|string
     {
         $page = Page::where("slug", "home")
             ->where('status', 'published')
@@ -32,6 +32,11 @@ class PageController extends Controller
             Page::whereNotNull("slug")
                 ->where('status', 'published')
                 ->first();
+
+        if (!$page) {
+            return "Content empty, please create page first.";
+        }
+
         return $this->displayViewSingle($page);
     }
 

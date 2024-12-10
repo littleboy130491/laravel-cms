@@ -8,8 +8,9 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             {{-- Logo --}}
-
-            <x-curator-glider :media="$settings->site_logo" />
+            @if ($settings->site_logo)
+                <x-curator-glider :media="$settings->site_logo" />
+            @endif
             <div class="flex-shrink-0">
                 <a href="#" class="flex items-center">
                     <img src="" alt="{{ config('app.name') }}" class="h-8 w-auto">

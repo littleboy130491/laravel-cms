@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,14 +11,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
-use Camya\Filament\Forms\Components\TitleWithSlugInput;
 use Awcodes\Curator\Components as Curator;
 use App\Filament\Traits\HasTitleSlug;
+use Filament\Resources\Concerns\Translatable;
 
 class CategoryResource extends Resource
 {
-    use HasTitleSlug;
+    use HasTitleSlug, Translatable;
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
