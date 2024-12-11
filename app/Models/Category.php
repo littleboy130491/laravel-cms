@@ -23,6 +23,12 @@ class Category extends Model
         'order_column',
     ];
 
+    public $translatable = [
+        'title',
+        'slug',
+        'description',
+    ];
+
     protected $casts = [
         'order_column' => 'integer',
     ];

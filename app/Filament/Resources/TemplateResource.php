@@ -39,7 +39,7 @@ class TemplateResource extends Resource
                 AceEditor::make('content')
                     ->label('Template code')
                     ->helperText(new HtmlString('You can put HTML, blade or components here.<br>
-                            Use <b>{!! $content !!}</b> to display HTML content from page record.'))
+                            Use <b>{!! Blade::render($content, [\'page\' => $page]) !!}</b> to display HTML content from page record.'))
                     ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('is_active')

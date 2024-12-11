@@ -17,7 +17,7 @@ class PageController extends Controller
 
     public function show(string $slug): View
     {
-        $page = Page::where("slug", $slug)
+        $page = Page::where('slug', $slug)
             ->where('status', 'published')
             ->firstOrFail();
 

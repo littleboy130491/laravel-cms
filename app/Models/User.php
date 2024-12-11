@@ -53,8 +53,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // return $this->hasRole('admin') || $this->hasPermissionTo('view_admin');
-        return $this->hasRole('super_admin') || $this->hasRole('admin');
+        // return $this->hasRole('super_admin') || $this->hasRole('admin');
+
+        // 80 is editor, check the value in Models/Role, $levels property
+        return $this->getHighestRoleLevel() >= 80;
     }
 
     public function canImpersonate(): bool

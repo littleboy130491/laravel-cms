@@ -15,9 +15,6 @@ trait DisplayViewWithCheckTemplates
         // remove .blade.php extension
         $templateName = $this->checkTemplate($page->template ?? '');
 
-        // blade content
-        $bladeContent = Blade::render($page->content, ["page" => $page]);
-
         // add class to body html
         $modelName = $this->getModelName() ?? '';
         $dataClass = $modelName ? "{$modelName} {$modelName}-id-{$page->id}" : '';
@@ -26,7 +23,7 @@ trait DisplayViewWithCheckTemplates
         return view('frontend.page', [
             'page' => $page,
             'componentName' => $templateName,
-            'content' => $bladeContent,
+            'content' => $page->content,
             'dataClass' => $dataClass,
             'modelName' => $modelName,
         ]);

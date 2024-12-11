@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\File;
 use Filament\Forms\Get;
 use App\Filament\Traits\HasTitleSlug;
 use Filament\Resources\Concerns\Translatable;
+use Illuminate\Support\Str;
 class PostResource extends Resource implements HasShieldPermissions
 {
     use HasTitleSlug, Translatable;
@@ -184,29 +185,20 @@ class PostResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ReplicateAction::make()
                     ->excludeAttributes(['slug', 'status'])
                     ->mutateRecordDataUsing(function (Post $record, array $data): array {
-                        $data['slug'] = $record->slug . '-copy';
+                        $data['slug'] = Str::slug($record->slug . '-copy', '-', null, ['unique' => true]);
                         $data['status'] = $record::STATUS_DRAFT;
                         $data['published_at'] = null;
                         return $data;
+                    })
+                    ->after(function (Post $replica, Post $record): void {
+                        $replica->categories()->attach($record->categories->pluck('id'));
+                        $replica->tags()->attach($record->tags->pluck('id'));
                     })
                     ->form([
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->helperText('Slug should be unique')
-                            ->unique(),
-                        Forms\Components\Select::make('status')
-                            ->options(Post::getStatuses())
-                            ->required()
-                            ->live(),
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->visible(function (Get $get): bool {
-                                return $get('status') === Post::STATUS_SCHEDULED || $get('status') === Post::STATUS_PUBLISHED;
-                            })
-                            ->required(
-                                function (Get $get): bool {
-                                    return $get('status') === Post::STATUS_SCHEDULED;
-                                }
-                            ),
+                            ->unique(ignoreRecord: true),
                     ]),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
@@ -221,7 +213,8 @@ class PostResource extends Resource implements HasShieldPermissions
                         ->modalDescription('Only filled fields will be updated. Empty fields will be ignored.')
                         ->form([
                             Forms\Components\Select::make('status')
-                                ->options(Post::getStatuses()),
+                                ->options(Post::getStatuses())
+                                ->live(),
                             Forms\Components\Select::make('is_featured')
                                 ->options([
                                     true => 'Featured',
@@ -231,7 +224,15 @@ class PostResource extends Resource implements HasShieldPermissions
                                 ->relationship('author', 'name')
                                 ->searchable()
                                 ->preload(),
-                            Forms\Components\DateTimePicker::make('published_at'),
+                            Forms\Components\DateTimePicker::make('published_at')
+                                ->visible(function (Get $get): bool {
+                                    return $get('status') === Post::STATUS_SCHEDULED || $get('status') === Post::STATUS_PUBLISHED;
+                                })
+                                ->required(
+                                    function (Get $get): bool {
+                                        return $get('status') === Post::STATUS_SCHEDULED;
+                                    }
+                                ),
                         ])
                         ->action(function (Collection $records, array $data) {
                             DB::transaction(function () use ($records, $data) {
@@ -275,7 +276,7 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->color('info')
                     ->label('Create dummy')
                     ->modalHeading('Create post with dummy data')
-                    ->visible(fn() => auth()->user()->can('createDummy', Post::class)),
+                    ->visible(fn() => auth()->user()->can('create_dummy_post')),
                 Tables\Actions\ExportAction::make()
                     ->exporter(PostExporter::class),
                 Tables\Actions\ImportAction::make()

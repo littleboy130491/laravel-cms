@@ -14,7 +14,8 @@ class CreateCategory extends CreateRecord
     {
         return [
             Actions\LocaleSwitcher::make(),
-            // ...
+            $this->getCreateFormAction()
+                ->formId('form'),
         ];
     }
 }

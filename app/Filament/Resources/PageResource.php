@@ -38,7 +38,7 @@ class PageResource extends Resource
                                 ...static::titleSlugField(),
                                 AceEditor::make('content')
                                     ->mode('php')
-                                    ->helperText(new HtmlString('You can put HTML, blade or components here. @ characters are not supported.
+                                    ->helperText(new HtmlString('You can put HTML, blade or components here. Basic @ directives are supported.
                         <br>You can access the value form fields using {{$page->field_name}}. Ex: {{$page->title}}'))
                                     ->columnSpanFull(),
                                 Forms\Components\KeyValue::make('meta')

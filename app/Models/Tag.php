@@ -17,6 +17,12 @@ class Tag extends Model
         'slug',
         'description',
     ];
+
+    public $translatable = [
+        'title',
+        'slug',
+        'description',
+    ];
     public static $slugPath = 'tags';
     public function posts(): BelongsToMany
     {

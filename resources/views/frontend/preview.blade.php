@@ -1,6 +1,6 @@
 <x-frontend.base>
     @if (view()->exists("components.{$componentName}"))
-        <x-dynamic-component :component="$componentName" :content="$content ?? '{Content from page will be rendered here}'" />
+        <x-dynamic-component :component="$componentName" :content="$content ?? '{Content from page will be rendered here}'" page="" />
     @else
         <div>Component is not found</div>
     @endif
