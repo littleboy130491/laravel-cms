@@ -44,6 +44,10 @@ class PageResource extends Resource
                                 Forms\Components\KeyValue::make('meta')
                                     ->reorderable()
                                     ->columnSpanFull(),
+                                Forms\Components\Textarea::make('excerpt')
+                                    ->columnSpanFull()
+                                    ->rows(3)
+                                    ->nullable(),
                             ]),
                         Forms\Components\Section::make()
                             ->schema([

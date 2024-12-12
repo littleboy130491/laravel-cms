@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 use App\Models;
 
-Route::get('/', [Controllers\PageController::class, 'home']);
 
-Route::get('/{slug}', [Controllers\PageController::class, 'show']);
+Route::get('/', [Controllers\PageController::class, 'home']);
+Route::get('/{locale}/', [Controllers\PageController::class, 'home']);
+
+Route::get('/{locale}/{slug}', [Controllers\PageController::class, 'show']);
 
 Route::get('/posts/{slug}', [Controllers\PostController::class, 'show']);
 

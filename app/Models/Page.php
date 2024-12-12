@@ -18,6 +18,7 @@ class Page extends Model
         'slug',
         'meta',
         'content',
+        'excerpt',
         'status',
         'head_code',
         'body_code',
@@ -36,6 +37,7 @@ class Page extends Model
         'title',
         'slug',
         'meta',
+        'excerpt',
     ];
     public function featuredImage(): BelongsTo
     {
@@ -50,20 +52,18 @@ class Page extends Model
                 '',
                 preserveWords: true
             );
+
         $description = $this->seo->description
-            ?? Str::limit(
-                strip_tags($this->content ?? null),
-                160,
-                '',
-                preserveWords: true
-            );
+            ?? $this->excerpt;
+
         $image = $this->seo?->image
             ?? $this->featuredImage?->path
             ?? null;
         // Override only the properties you want:
         return new SEOData(
-            title: $this->title,
-            description: strip_tags($this->content),
+            title: $title,
+            description: $description,
+            image: $image,
         );
     }
 }
