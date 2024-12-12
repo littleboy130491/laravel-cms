@@ -1,1 +1,1 @@
-template page from cms
+{!! Blade::render($content, ['page' => $page]) !!}

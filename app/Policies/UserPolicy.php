@@ -49,9 +49,9 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function update(User $user, User $targetUser): bool
+    public function update(User $user): bool
     {
-        return $user->can('update_user') && $user->hasHigherLevelThan($targetUser);
+        return $user->can('update_user');
     }
 
     /**
@@ -60,9 +60,9 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function delete(User $user, User $targetUser): bool
+    public function delete(User $user): bool
     {
-        return $user->can('delete_user') && $user->hasHigherLevelThan($targetUser);
+        return $user->can('delete_user');
     }
 
     /**
@@ -141,5 +141,4 @@ class UserPolicy
     {
         return $user->can('reorder_user');
     }
-
 }

@@ -17,22 +17,26 @@ class PageController extends Controller
         return Str::snake(class_basename(Page::class));
     }
 
-    public function show(?string $locale, string $slug): View
+    public function show(?string $locale = config('app.locale'), string $slug): View
     {
-        App::setLocale($locale);
-        //dd($locale);
-        $page = Page::where('slug', $slug)
+        if ($locale) {
+            App::setLocale($locale);
+        }
+
+        $page = Page::whereJsonContains('slug->' . $locale, $slug)
             ->where('status', 'published')
             ->firstOrFail();
 
         return $this->displayViewSingle($page);
     }
 
-    public function home(?string $locale = ''): View|string
+    public function home(string $locale = ''): View|string
     {
-        App::setLocale($locale);
+        if ($locale) {
+            App::setLocale($locale);
+        }
 
-        $page = Page::where("slug", "home")
+        $page = Page::whereJsonContains('slug->' . config('app.locale'), config('app.homepage_slug_default_locale'))
             ->where('status', 'published')
             ->first() ??
             Page::whereNotNull("slug")
@@ -42,7 +46,7 @@ class PageController extends Controller
         if (!$page) {
             return "Content empty, please create page first.";
         }
-        // dd($page);
+
         return $this->displayViewSingle($page);
     }
 

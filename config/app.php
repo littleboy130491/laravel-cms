@@ -84,10 +84,12 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
-    // 'lang_available' => [
-    //     'en',
-    //     'id',
-    // ],
+    'homepage_slug_default_locale' => 'home',
+
+    'lang_available' => [
+        'en',
+        'id',
+    ],
 
     /*
     |--------------------------------------------------------------------------
