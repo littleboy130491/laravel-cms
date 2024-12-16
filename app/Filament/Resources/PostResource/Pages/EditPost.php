@@ -6,7 +6,7 @@ use App\Filament\Resources\PostResource;
 use App\Filament\Traits\HasCommonHeaderActions;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Post;
 class EditPost extends EditRecord
 {
     use HasCommonHeaderActions, EditRecord\Concerns\Translatable;
@@ -17,7 +17,8 @@ class EditPost extends EditRecord
         return [
             Actions\LocaleSwitcher::make(),
             Actions\Action::make('view')
-                ->url(fn(Model $record): string => '/posts/' . $record->slug)
+                ->url(fn(Post $record): string =>
+                    '/' . $this->getActiveActionsLocale() . '/' . Post::$slugPath . '/' . $record->slug)
                 ->openUrlInNewTab()
                 ->color('gray'),
             ...($this->commonHeaderActions()),

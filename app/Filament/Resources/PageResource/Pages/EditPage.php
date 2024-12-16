@@ -4,9 +4,9 @@ namespace App\Filament\Resources\PageResource\Pages;
 
 use App\Filament\Resources\PageResource;
 use App\Filament\Traits\HasCommonHeaderActions;
+use App\Models\Page;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class EditPage extends EditRecord
 {
@@ -18,7 +18,8 @@ class EditPage extends EditRecord
         return [
             Actions\LocaleSwitcher::make(),
             Actions\Action::make('view')
-                ->url(fn(Model $record): string => '/' . $record->slug)
+                ->url(fn(Page $record): string =>
+                    '/' . $this->getActiveActionsLocale() . '/' . $record->slug)
                 ->openUrlInNewTab()
                 ->color('gray'),
             ...($this->commonHeaderActions()),

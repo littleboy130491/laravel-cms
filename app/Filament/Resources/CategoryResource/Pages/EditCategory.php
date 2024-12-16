@@ -6,7 +6,7 @@ use App\Filament\Resources\CategoryResource;
 use App\Filament\Traits\HasCommonHeaderActions;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-
+use App\Models\Category;
 class EditCategory extends EditRecord
 {
     use HasCommonHeaderActions, EditRecord\Concerns\Translatable;
@@ -16,6 +16,11 @@ class EditCategory extends EditRecord
     {
         return [
             Actions\LocaleSwitcher::make(),
+            Actions\Action::make('view')
+                ->url(fn(Category $record): string =>
+                    '/' . $this->getActiveActionsLocale() . '/' . Category::$slugPath . '/' . $record->slug)
+                ->openUrlInNewTab()
+                ->color('gray'),
             ...($this->commonHeaderActions()),
         ];
     }
