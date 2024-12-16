@@ -56,7 +56,7 @@ class PageResource extends Resource
                                         'draft' => 'Draft',
                                         'published' => 'Published'
                                     ])
-                                    ->default('draft')
+                                    ->default('published')
                                     ->required(),
                                 Forms\Components\Select::make('template')
                                     ->options(function () {

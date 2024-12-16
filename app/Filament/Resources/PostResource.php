@@ -58,7 +58,7 @@ class PostResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Forms\Components\Select::make('status')
                                 ->options(Post::getStatuses())
-                                ->default(Post::STATUS_DRAFT)
+                                ->default(Post::STATUS_PUBLISHED)
                                 ->required()
                                 ->live(),
                             Forms\Components\DateTimePicker::make('published_at')
