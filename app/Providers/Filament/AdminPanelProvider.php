@@ -111,7 +111,7 @@ class AdminPanelProvider extends PanelProvider
                     ->usingPage(\App\Filament\Pages\HealthCheckResults::class),
                 SpotlightPlugin::make(),
                 SpatieLaravelTranslatablePlugin::make()
-                    ->defaultLocales(['en', 'id']),
+                    ->defaultLocales(config('app.available_lang')),
                 \BezhanSalleh\FilamentGoogleAnalytics\FilamentGoogleAnalyticsPlugin::make()
             ]);
     }

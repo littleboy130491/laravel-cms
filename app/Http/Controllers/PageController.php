@@ -16,15 +16,9 @@ class PageController extends Controller
         return Str::snake(class_basename(Page::class));
     }
 
-    public function show(string $slug, ?string $secondSlug = null): View
+    public function show(string $slug): View
     {
 
-        // if accessing localization
-        if (in_array($slug, config('app.lang_available'))) {
-            return $this->showLocalized($slug, $secondSlug);
-        }
-
-        // accessing slug using default lang
         $page = Page::whereJsonContains('slug->' . config('app.locale'), $slug)
             ->where('status', 'published')
             ->firstOrFail();
@@ -32,7 +26,7 @@ class PageController extends Controller
         return $this->displayViewSingle($page);
     }
 
-    protected function showLocalized(string $locale, string $slug): View
+    public function showLocalized(string $locale, string $slug): View
     {
         app()->setLocale($locale);
 

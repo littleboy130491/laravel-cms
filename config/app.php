@@ -86,7 +86,7 @@ return [
 
     'homepage_slug_default_locale' => 'home',
 
-    'lang_available' => [
+    'available_lang' => [
         'en',
         'id',
     ],
