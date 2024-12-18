@@ -12,7 +12,6 @@ trait DisplayViewWithCheckTemplates
 {
     protected function displayViewSingle(Post|Page $page): View
     {
-        // remove .blade.php extension
         $templateName = $this->checkTemplate($page->template ?? '');
 
         // add class to body html
@@ -34,12 +33,15 @@ trait DisplayViewWithCheckTemplates
         // remove .blade.php extension
         $slug = str_replace(".blade.php", "", $name);
 
+        // find assigned template from CMS
         if ($slug && Template::where('slug', $slug)?->first()?->is_active) {
             $templateName = $slug;
         } else
+            // fallback template from CMS for model name, ex: post or page
             if (Template::where('slug', $this->getModelName())?->first()?->is_active) {
                 $templateName = $this->getModelName();
             } else
+                // fallback template from CMS for default
                 if (Template::where('slug', 'default')?->first()?->is_active) {
                     $templateName = 'default';
                 } else

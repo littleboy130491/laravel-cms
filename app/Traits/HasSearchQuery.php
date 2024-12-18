@@ -16,7 +16,6 @@ trait HasSearchQuery
                 ->orWhere('excerpt', 'like', "%{$search}%");
         });
 
-
         return $query;
 
     }

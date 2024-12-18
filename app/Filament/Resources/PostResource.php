@@ -86,10 +86,17 @@ class PostResource extends Resource implements HasShieldPermissions
                                     CategoryResource::formFields()
                                 ),
                             Forms\Components\Select::make('tags')
-                                ->relationship('tags', 'title')
+                                ->relationship(
+                                    'tags',
+                                    'title',
+                                )
                                 ->multiple()
                                 ->searchable()
                                 ->preload()
+                                ->getOptionLabelFromRecordUsing(function ($record, $livewire) {
+                                    $locale = $livewire->getActiveActionsLocale();
+                                    return $record->getTranslation('title', $locale);
+                                })
                                 ->createOptionForm(TagResource::formFields()),
                             Forms\Components\Select::make('author_id')
                                 ->relationship('author', 'name')
@@ -154,8 +161,10 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->color(fn(string $state): string => static::getModel()::getStatusColors()[$state] ?? 'gray'),
                 Tables\Columns\TextColumn::make('categories.title')
+                    ->formatStateUsing(fn($record, $livewire) => static::formatTranslatableRelation($record, 'categories', $livewire))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tags.title')
+                    ->formatStateUsing(fn($record, $livewire) => static::formatTranslatableRelation($record, 'tags', $livewire))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_featured'),
                 Tables\Columns\TextColumn::make('published_at')
@@ -307,7 +316,8 @@ class PostResource extends Resource implements HasShieldPermissions
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]);
+            ])
+            ->with(['categories', 'tags']);
     }
 
     public static function getPermissionPrefixes(): array
@@ -328,5 +338,14 @@ class PostResource extends Resource implements HasShieldPermissions
             'create_dummy',
 
         ];
+    }
+
+    protected static function formatTranslatableRelation($record, $relation, $livewire)
+    {
+        $currentLocale = $livewire->getActiveTableLocale();
+
+        return $record->$relation->map(function ($item) use ($currentLocale) {
+            return $item->getTranslation('title', $currentLocale);
+        })->implode(', ');
     }
 }

@@ -24,4 +24,15 @@ class EditPost extends EditRecord
             ...($this->commonHeaderActions()),
         ];
     }
+
+    public function updatedActiveActionsLocale(): void
+    {
+        parent::updatedActiveActionsLocale();
+
+        // Force a complete form refresh
+        $this->form->fill($this->data);
+
+        // Force rehydrate the form
+        $this->form = $this->form($this->form);
+    }
 }
